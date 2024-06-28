@@ -1,6 +1,7 @@
 #include "args.h"
 #include "logger.h"
 #include "dns_server.h"
+#include <signal.h>
 
 int main(int argc, char **argv) {
     // 服务器的配置信息
@@ -14,7 +15,7 @@ int main(int argc, char **argv) {
         hloge("Failed to initialize DNS Server");
         return -1;
     }
-
+    signal(SIGINT, dns_server_stop);
     dns_server_start(&server);
 
     return 0;

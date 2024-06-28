@@ -66,8 +66,31 @@ cache_t* cache_create(int capacity) {
     return cache;
 }
 
+void free_trie_node(trie_node_t* node) {
+    for (int i = 0; i < N; ++i) {
+        if (node->children[i]) {
+            free_trie_node(node->children[i]);
+        }
+    }
+    free(node);
+}
+
 void cache_destroy(cache_t* cache) {
-    // Implement the function to free all allocated memory
+    // 释放LRU链表中的所有节点
+    lru_node_t* current = cache->head;
+    while (current) {
+        lru_node_t* next = current->next;
+        free(current->key);
+        free(current->value);
+        free(current);
+        current = next;
+    }
+
+    // 释放Trie树中的所有节点
+    free_trie_node(cache->root);
+
+    // 释放cache结构体本身
+    free(cache);
 }
 
 void cache_insert(cache_t* cache, const char* key, const char* value) {
